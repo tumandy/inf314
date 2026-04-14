@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>INF314 - Values, Rituals, Impulses</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <h1>Values, Rituals, Impulses: An Exploration of Myself and Graphic Design</h1>
+
+    <div class="gallery">
+        <!-- 12 spreads -->
+        <img src="images/img1.webp" class="spread" onclick="openModal(this)">
+        <img src="images/img2.webp" class="spread" onclick="openModal(this)">
+        <div class="spread" onclick="openModal(3)">3</div>
+        <div class="spread" onclick="openModal(4)">4</div>
+
+        <div class="spread" onclick="openModal(5)">5</div>
+        <div class="spread" onclick="openModal(6)">6</div>
+        <div class="spread" onclick="openModal(7)">7</div>
+        <div class="spread" onclick="openModal(8)">8</div>
+
+        <div class="spread" onclick="openModal(9)">9</div>
+        <div class="spread" onclick="openModal(10)">10</div>
+        <div class="spread" onclick="openModal(11)">11</div>
+        <div class="spread" onclick="openModal(12)">12</div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal" onclick="closeModal()">
+        <span class="close">&times;</span>
+        <div class="modal-content" id="modal-box"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
