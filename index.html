@@ -3,39 +3,197 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>INF314 - Values, Rituals, Impulses</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>INF314 - In Practice by Mandy Tu</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        /* iPhone / small screens */
+        @media (max-width: 600px) {
+            body {
+                overflow: auto;
+                /* prevents clipping if layout gets tight */
+            }
+
+            .link {
+                font-size: 14px;
+            }
+
+            .text-box {
+                max-width: 80vw;
+                font-size: 13px;
+            }
+        }
+
+        .link {
+            position: absolute;
+        }
+
+        .link:not(.text-box) {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .text-box {
+            max-width: 250px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border: 1px solid #ccc;
+            cursor: default;
+            /* not clickable */
+        }
+
+        .text-box h1 {
+            font-size: 18px;
+            margin: 0 0 5px;
+        }
+
+        .text-box p {
+            font-size: 12px;
+            margin: 0;
+        }
+
+        /* Lightbox */
+        #lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        #closeBtn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+    </style>
 </head>
 
 <body>
+    <!-- Links -->
+    <div class="link text-box">
+        <h1><em>In Practice</em></h1>
+        <p>An anarchival impulse that creates new meanings from reworked fragments.</p><br>
+        <p>INF314 - Mandy Tu</p>
+        <h4>Instructions</h4>
+        <p>The image titles are intentionally placed randomly across the screen. Click a title to open its image in a
+            lightbox view. Reload to generate a new layout. (Viewable across screen sizes)</p>
+    </div>
+    <div class="link" data-img="images/AddSaveBookmark.PNG">AddSaveBookmark</div>
+    <div class="link" data-img="images/pins.jpg">pins</div>
+    <div class="link" data-img="images/Pages 1-5.jpg">Pages 1-5</div>
+    <div class="link" data-img="images/Flowerpot.jpg">Flowerpot</div>
+    <div class="link" data-img="images/Being.jpg">Being</div>
+    <div class="link" data-img="images/Over and over.jpg">Over and over</div>
 
-    <h1>Values, Rituals, Impulses: An Exploration of Myself and Graphic Design</h1>
-
-    <div class="gallery">
-        <!-- 12 spreads -->
-        <img src="images/img1.webp" class="spread" onclick="openModal(this)">
-        <img src="images/img2.webp" class="spread" onclick="openModal(this)">
-        <div class="spread" onclick="openModal(3)">3</div>
-        <div class="spread" onclick="openModal(4)">4</div>
-
-        <div class="spread" onclick="openModal(5)">5</div>
-        <div class="spread" onclick="openModal(6)">6</div>
-        <div class="spread" onclick="openModal(7)">7</div>
-        <div class="spread" onclick="openModal(8)">8</div>
-
-        <div class="spread" onclick="openModal(9)">9</div>
-        <div class="spread" onclick="openModal(10)">10</div>
-        <div class="spread" onclick="openModal(11)">11</div>
-        <div class="spread" onclick="openModal(12)">12</div>
+    <!-- Lightbox -->
+    <div id="lightbox">
+        <span id="closeBtn">&times;</span>
+        <img src="" alt="">
     </div>
 
-    <!-- Modal -->
-    <div id="modal" class="modal" onclick="closeModal()">
-        <span class="close">&times;</span>
-        <div class="modal-content" id="modal-box"></div>
-    </div>
+    <script>
+        // Bounding box
+        function placeElements() {
+            const elements = [
+                ...document.querySelectorAll('.link.text-box'),
+                ...document.querySelectorAll('.link:not(.text-box)')
+            ];
+            const placed = [];
 
-    <script src="script.js"></script>
+            const isMobile = window.innerWidth < 600;
+            const padding = isMobile ? 30 : 10;
+            const maxAttempts = isMobile ? 80 : 200;
+
+            elements.forEach(el => {
+                const w = el.offsetWidth;
+                const h = el.offsetHeight;
+
+                let x, y;
+                let attempts = 0;
+
+                do {
+                    x = Math.random() * (window.innerWidth - w - padding);
+                    y = Math.random() * (window.innerHeight - h - padding);
+
+                    attempts++;
+                } while (
+                    placed.some(p =>
+                        !(x + w < p.x ||
+                            x > p.x + p.w ||
+                            y + h < p.y ||
+                            y > p.y + p.h)
+                    ) && attempts < maxAttempts
+                );
+
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+
+                placed.push({ x, y, w, h });
+            });
+        }
+
+        // run on load
+        window.addEventListener('load', placeElements);
+
+        // rerun on resize (THIS is what makes it responsive)
+        window.addEventListener('resize', () => {
+            placeElements();
+        });
+        // Lightbox logic
+        const links = document.querySelectorAll('.link');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = lightbox.querySelector('img');
+        const closeBtn = document.getElementById('closeBtn');
+
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                const imgSrc = link.getAttribute('data-img');
+                if (!imgSrc) return; // ignore text box
+
+                lightboxImg.src = imgSrc;
+                lightbox.style.display = 'flex';
+            });
+        });
+
+        // Close button
+        closeBtn.addEventListener('click', () => {
+            lightbox.style.display = 'none';
+        });
+
+        // Click outside image closes too
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.style.display = 'none';
+            }
+        });
+
+        // Optional: ESC key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                lightbox.style.display = 'none';
+            }
+        });
+    </script>
+
 </body>
 
 </html>
